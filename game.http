@@ -1,0 +1,102 @@
+// Start each request and see what will happen
+
+### Game via console.
+// Control this user via response view.
+WEBSOCKET ws://localhost:8080/ws-rpg-game
+Content-Type: application/json
+
+{
+  "@type": "user_connected",
+  "userId": "/<1UserName1>/"
+}
+
+### Game via predefinded messages
+// This user walks, then waits and then attacks 5 times users in radius 20
+WEBSOCKET ws://localhost:8080/ws-rpg-game
+Content-Type: application/json // used for IDE highlihgting
+
+{
+  "@type": "user_connected",
+  "userId": "wiNnEr1999"
+}
+=== wait-for-server
+{
+  "@type": "user_movement",
+  "userId": "wiNnEr1999",
+  "direction": "Forward",
+  "delta": 3.0
+}
+=== wait-for-server
+{
+  "@type": "user_movement",
+  "userId": "wiNnEr1999",
+  "direction": "Right",
+  "delta": 3.0
+}
+=== wait-for-server
+=== wait-for-server
+=== wait-for-server
+=== wait-for-server
+=== wait-for-server
+=== wait-for-server
+{
+  "@type": "user_attack",
+  "userId": "wiNnEr1999",
+  "attackType": "Force"
+}
+=== wait-for-server
+{
+  "@type": "user_attack",
+  "userId": "wiNnEr1999",
+  "attackType": "Force"
+}
+=== wait-for-server
+{
+  "@type": "user_attack",
+  "userId": "wiNnEr1999",
+  "attackType": "Force"
+}
+=== wait-for-server
+{
+  "@type": "user_attack",
+  "userId": "wiNnEr1999",
+  "attackType": "Force"
+}
+=== wait-for-server
+{
+  "@type": "user_attack",
+  "userId": "wiNnEr1999",
+  "attackType": "Force"
+}
+=== wait-for-server
+
+### Game via script
+// This user go diagonally
+WEBSOCKET ws://localhost:8080/ws-rpg-game
+Content-Type: application/json
+
+{
+  "@type": "user_connected",
+  "userId": "____Lord___Killer____"
+}
+
+> {%
+var movementsCount = 0;
+ response.body.onEachMessage((message, unsubscribe, output) => {
+     var json = JSON.parse(message);
+
+     if (json['@type'] === "user_position" && json.userId === "____Lord___Killer____" && movementsCount < 4) {
+         output(JSON.stringify({
+            userId: "____Lord___Killer____",
+            "@type": "user_movement",
+            direction: movementsCount % 2 === 0 ? "Forward" : "Right",
+            delta: 3.0
+         }));
+         movementsCount++;
+     }
+
+     if (json['@type'] === 'game_finished') {
+         unsubscribe()
+     }
+ });
+ %}
